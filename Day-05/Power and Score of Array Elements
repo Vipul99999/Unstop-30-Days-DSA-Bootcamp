@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <climits>
+
+using namespace std;
+
+int findSecondMin(std::vector<int> &arr, int idx, int size) {
+
+    int min1 = INT_MAX;
+    int min2 = INT_MAX;
+
+    for (int i = idx; i < size; ++i) {
+        int val = arr[i];
+
+        if (val < min1) {
+            min2 = min1;
+            min1 = val;
+        } else if (val > min1 && val < min2) {
+            min2 = val;
+        }
+    }
+        return min2;
+}
+
+int computeScore(std::vector<int>& arr) {
+    // Write your logic here.
+    int n = arr.size();
+    vector<int>from_left_min_ele(n , INT_MAX);
+    vector<int>from_right_min_ele(n , INT_MAX);
+    for(int i = 2; i < n ; i++)
+       from_left_min_ele[i] =  findSecondMin(arr, 0, i);
+
+    for(int i = 0 ; i < n -2 ; i++)
+         from_right_min_ele[i] =  findSecondMin(arr,i+1, n);
+    
+    int score = 0;
+
+    for(int i = 0 ; i < n ; i++){
+        score += max(arr[i] - from_left_min_ele[i], arr[i] - from_right_min_ele[i] );
+    }
+    // Returns:
+    //     int: Computed score based on the problem statement
+    return score; // Placeholder return
+}
+
+int main() {
+    int n;
+    std::cin >> n; // First input is the integer n
+    std::vector<int> arr(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> arr[i]; // Remaining input is the array of integers
+    }
+
+    // Call user logic function and print the output
+    int result = computeScore(arr);
+    std::cout << result << std::endl;
+    return 0;
+}
