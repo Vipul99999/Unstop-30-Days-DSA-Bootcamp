@@ -1,0 +1,65 @@
+#include <iostream>
+#include <string>
+#include <unordered_set>
+#include <cctype>
+#include <cmath>
+
+// Helper to check if a number is prime
+bool is_prime(int num) {
+    if (num < 2) return false;
+    if (num == 2) return true;
+    if (num % 2 == 0) return false;
+    int limit = static_cast<int>(std::sqrt(num));
+    for (int i = 3; i <= limit; i += 2) {
+        if (num % i == 0) return false;
+    }
+    return true;
+}
+
+// Store perfect squares of prime numbers up to sqrt(100000)
+void store_prime_squares(std::unordered_set<int>& st) {
+    int limit = static_cast<int>(std::sqrt(100000));
+    for (int i = 2; i <= limit; ++i) {
+        if (is_prime(i)) {
+            st.insert(i * i);
+        }
+    }
+}
+
+// Check if character is a vowel
+bool is_vowel(char ch) {
+    ch = std::tolower(ch);
+    return ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u';
+}
+
+// Main qualification logic
+void check_qualification(const std::string& word) {
+    int vowel_count = 0;
+    int consonant_count = 0;
+
+    for (char ch : word) {
+        if (std::isalpha(ch)) {
+            if (is_vowel(ch)) {
+                ++vowel_count;
+            } else {
+                ++consonant_count;
+            }
+        }
+    }
+
+    std::unordered_set<int> valid_consonant_counts;
+    store_prime_squares(valid_consonant_counts);
+
+    if (vowel_count >= 2 && consonant_count > 0 && valid_consonant_counts.count(consonant_count)) {
+        std::cout << "Qualify" << std::endl;
+    } else {
+        std::cout << "Disqualify" << std::endl;
+    }
+}
+
+int main() {
+    std::string word;
+    std::getline(std::cin, word);
+    check_qualification(word);
+    return 0;
+}
