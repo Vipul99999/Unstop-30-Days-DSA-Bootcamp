@@ -1,0 +1,31 @@
+#include <iostream>
+#include <string>
+
+
+void decode_sequences(int n, const std::string& word1, int m, const std::string& word2) {
+    // Write your logic here.
+   std::string result;
+    int i = 0;
+
+    // Interleave characters while both strings have remaining characters
+    while (i < n && i < m) {
+        result.push_back(word1[i]);
+        result.push_back(word2[i]);
+        ++i;
+    }
+    if(i < n){
+        result += word1.substr(i);
+    }
+    if(i  < m){
+        result += word2.substr(i);
+    }
+   std :: cout << result;
+}
+
+int main() {
+    int n, m;
+    std::string word1, word2;
+    std::cin >> n >> word1 >> m >> word2;
+    decode_sequences(n, word1, m, word2);
+    return 0;
+}
