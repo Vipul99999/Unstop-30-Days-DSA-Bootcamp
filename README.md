@@ -48,9 +48,9 @@ Each folder contains my solutions for the daily challenges.
 ---
 
 ## 🤝 Connect with Me  
-- [LinkedIn](https://www.linkedin.com/)  
-- [GitHub](https://github.com/)  
-- [Email](mailto:vipul@example.com)  
+- [LinkedIn]([https://www.linkedin.com/](https://www.linkedin.com/in/vipul-kumar-patel-90b1242b1/))  
+- [GitHub]([https://github.com/](https://github.com/Vipul99999))  
+- [Email](mailto:vipul20020308@gmail.com)  
 
 ---
 
