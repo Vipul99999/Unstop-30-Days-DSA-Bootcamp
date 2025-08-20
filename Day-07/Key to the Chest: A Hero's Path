@@ -1,0 +1,115 @@
+//CPP 
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Point { int x, y; };
+
+int dx[4] = {1, -1, 0, 0};
+int dy[4] = {0, 0, 1, -1};
+
+// BFS with option to block chest
+vector<vector<int>> bfs_grid(const vector<vector<char>>& grid, int n, int m, int sx, int sy, bool allowChest) {
+    vector<vector<int>> dist(n, vector<int>(m, -1));
+    queue<pair<int,int>> q;
+    q.push({sx, sy});
+    dist[sx][sy] = 0;
+
+    while (!q.empty()) {
+        auto [x, y] = q.front(); q.pop();
+        for (int k = 0; k < 4; k++) {
+            int nx = x + dx[k], ny = y + dy[k];
+            if (nx < 0 || ny < 0 || nx >= n || ny >= m) continue;
+            if (grid[nx][ny] == 'O') continue; // obstacle
+            if (!allowChest && grid[nx][ny] == 'C') continue; // block chest
+            if (dist[nx][ny] == -1) {
+                dist[nx][ny] = dist[x][y] + 1;
+                q.push({nx, ny});
+            }
+        }
+    }
+    return dist;
+}
+
+void find_shortest_path(vector<vector<char>>& grid, int n, int m) {
+    Point hero, chest;
+    vector<Point> keys;
+
+    // locate hero, keys, chest
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (grid[i][j] == 'H') hero = {i, j};
+            if (grid[i][j] == 'C') chest = {i, j};
+            if (grid[i][j] == 'K') keys.push_back({i, j});
+        }
+    }
+
+    int k = keys.size();
+    int total = k + 2; // Hero + Keys + Chest
+    vector<Point> points;
+    points.push_back(hero);
+    for (auto &p : keys) points.push_back(p);
+    points.push_back(chest);
+
+    vector<vector<int>> dist(total, vector<int>(total, -1));
+
+    // Distances ignoring chest (H/Keys)
+    for (int i = 0; i < total - 1; i++) {
+        auto d = bfs_grid(grid, n, m, points[i].x, points[i].y, false);
+        for (int j = 0; j < total - 1; j++) {
+            dist[i][j] = d[points[j].x][points[j].y];
+        }
+    }
+
+    // Distances from each key to chest (allow chest)
+    for (int i = 1; i <= k; i++) {
+        auto d = bfs_grid(grid, n, m, points[i].x, points[i].y, true);
+        dist[i][k+1] = d[chest.x][chest.y];
+    }
+
+    // DP TSP-style
+    int N = k;
+    int INF = 1e9;
+    vector<vector<int>> dp(1<<N, vector<int>(N, INF));
+
+    for (int i = 0; i < N; i++) {
+        if (dist[0][i+1] != -1) dp[1<<i][i] = dist[0][i+1];
+    }
+
+    for (int mask = 0; mask < (1<<N); mask++) {
+        for (int i = 0; i < N; i++) {
+            if (!(mask & (1<<i))) continue;
+            if (dp[mask][i] == INF) continue;
+            for (int j = 0; j < N; j++) {
+                if (mask & (1<<j)) continue;
+                if (dist[i+1][j+1] == -1) continue;
+                int newMask = mask | (1<<j);
+                dp[newMask][j] = min(dp[newMask][j], dp[mask][i] + dist[i+1][j+1]);
+            }
+        }
+    }
+
+    int ans = INF;
+    for (int i = 0; i < N; i++) {
+        if (dp[(1<<N)-1][i] < INF && dist[i+1][N+1] != -1) {
+            ans = min(ans, dp[(1<<N)-1][i] + dist[i+1][N+1]);
+        }
+    }
+
+    if (ans == INF) cout << "Impossible\n";
+    else cout << ans << "\n";
+}
+
+int main() {
+    int n, m;
+    cin >> n >> m;
+    vector<vector<char>> grid(n, vector<char>(m));
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> grid[i][j];
+        }
+    }
+
+    find_shortest_path(grid, n, m);
+    return 0;
+}
