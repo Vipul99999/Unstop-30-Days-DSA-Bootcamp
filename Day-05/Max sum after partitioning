@@ -1,0 +1,51 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Function to compute the maximum sum after partitioning
+int max_partition_sum(const vector<int>& arr, int k) {
+    int n = arr.size();
+    vector<int> dp(n + 1, 0);
+
+    for (int i = 1; i <= n; ++i) {
+        int max_val = 0;
+        for (int j = 1; j <= k && i - j >= 0; ++j) {
+            max_val = max(max_val, arr[i - j]);
+            dp[i] = max(dp[i], dp[i - j] + max_val * j);
+        }
+    }
+
+    return dp[n];
+}
+
+// Sieve of Eratosthenes to count primes ≤ m
+int count_primes(int m) {
+    if (m < 2) return 0;
+    vector<bool> is_prime(m + 1, true);
+    is_prime[0] = is_prime[1] = false;
+
+    for (int i = 2; i * i <= m; ++i) {
+        if (is_prime[i]) {
+            for (int j = i * i; j <= m; j += i) {
+                is_prime[j] = false;
+            }
+        }
+    }
+
+    return count(is_prime.begin(), is_prime.end(), true);
+}
+
+int main() {
+    int n, k;
+    cin >> n;
+    vector<int> arr(n);
+    for (int& x : arr) cin >> x;
+    cin >> k;
+
+    int max_sum = max_partition_sum(arr, k);
+    int prime_count = count_primes(max_sum);
+
+    cout << prime_count << endl;
+    return 0;
+}
