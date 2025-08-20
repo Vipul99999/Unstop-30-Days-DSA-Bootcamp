@@ -1,0 +1,40 @@
+#include <iostream>
+#include <vector>
+#include <climits>  
+#include <cmath>   
+
+using namespace std;
+
+int calculate_wish_values_sum(int N, const vector<int>& A) {
+    int min_val = INT_MAX;
+    int max_val = INT_MIN;
+
+    vector<int> maxBright(N);
+    vector<int> minBright(N);
+    for (int i = 0; i < N; i++) {
+        max_val = max(max_val, A[N - i - 1]);
+        maxBright[N - i - 1] = max_val;
+         min_val = min(min_val, A[i]);
+        minBright[i] = min_val;
+    }
+
+
+    int wish = 0;
+    for (int i = 0; i < N; i++) {
+        wish += abs(maxBright[i] - minBright[i]);
+    }
+
+    return wish;
+}
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> A(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> A[i];
+    }
+    int result = calculate_wish_values_sum(N, A);
+    cout << result << endl;
+    return 0;
+}
