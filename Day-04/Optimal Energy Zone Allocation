@@ -1,0 +1,44 @@
+//CPP
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int countValidPartitions(vector<int>& E, int N) {
+    vector<long long> prefixSum(N + 1, 0);
+    
+    // Compute prefix sum
+    for (int i = 0; i < N; ++i) {
+        prefixSum[i + 1] = prefixSum[i] + E[i];
+    }
+
+    int count = 0;
+    
+    // Try all valid k values
+    for (int k = 1; 2 * k < N; ++k) {
+        long long sumAlpha = prefixSum[k] - prefixSum[0];
+        long long sumBeta = prefixSum[N - k] - prefixSum[k];
+        long long sumGamma = prefixSum[N] - prefixSum[N - k];
+
+        if (sumAlpha + sumGamma > sumBeta) {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int N;
+    cin >> N;
+
+    vector<int> E(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> E[i];
+    }
+
+    int result = countValidPartitions(E, N);
+
+    cout << result << endl;
+
+    return 0;
+}
