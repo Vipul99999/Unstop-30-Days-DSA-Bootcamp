@@ -1,0 +1,49 @@
+//CPP 
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <utility>
+
+using namespace std;
+
+
+vector<int> find_tallest(int N, int K, vector<int> height) {
+    vector<int> result;
+    vector<int>window;
+    int max_val = -1;
+    for(int i  = 0; i< K; i++){
+       window.push_back(height[i]);
+       max_val = max(max_val, height[i]);
+    }
+    result.push_back(max_val);
+    for(int i = K; i<N; i++){
+       if(max_val == height[i-K]){
+         max_val = -10;
+         for(int j = i-K+1; j <= i; j++){
+           max_val = max(max_val, height[j]);
+         }
+       }
+       else{
+        max_val = max(max_val, height[i]);
+       }
+        result.push_back(max_val);
+    }
+    // Write your logic here.
+    return result;
+}
+
+int main() {
+    int N, K;
+    cin >> N >> K;
+    vector<int> height(N);
+    for (int i = 0; i < N; i++) {
+        cin >> height[i];
+    }
+    vector<int> result = find_tallest(N, K, height);
+    for (int i = 0; i < result.size(); i++) {
+        cout << result[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
