@@ -1,0 +1,92 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+#include <unordered_set>
+using namespace std;
+
+
+// Helper function to check if a number is prime
+bool is_prime(int num) {
+    if (num < 2) return false;
+    if (num == 2) return true;
+    if (num % 2 == 0) return false;
+    for (int i = 3; i <= sqrt(num); i += 2)
+        if (num % i == 0) return false;
+    return true;
+}
+
+// Helper function to check if a number is a perfect square
+bool is_perfect_square(int num) {
+    int root = sqrt(num);
+    return root * root == num;
+}
+
+void transform_matrix(vector<vector<int>>& matrix, int n, int& row_count, int& prime_count) {
+    vector<vector<int>> temp = matrix;
+    unordered_set<int> mark_rows, mark_cols;
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            int val = matrix[i][j];
+            if (is_prime(val)) {
+                temp[i][j] = 0;
+            }
+            if (is_perfect_square(val)) {
+                mark_rows.insert(i);
+                mark_cols.insert(j);
+            }
+        }
+    }
+
+    // Apply perfect square transformation (-1 overrides 0)
+    for (int i : mark_rows) {
+        for (int j = 0; j < n; ++j) {
+            temp[i][j] = -1;
+        }
+    }
+    for (int j : mark_cols) {
+        for (int i = 0; i < n; ++i) {
+            temp[i][j] = -1;
+        }
+    }
+
+    // Count fully -1 rows and remaining 0s
+    row_count = 0;
+    prime_count = 0;
+    for (int i = 0; i < n; ++i) {
+        bool all_minus_one = true;
+        for (int j = 0; j < n; ++j) {
+            if (temp[i][j] != -1) all_minus_one = false;
+            if (temp[i][j] == 0) ++prime_count;
+        }
+        if (all_minus_one) ++row_count;
+    }
+
+    matrix = temp;
+}
+
+
+int main() {
+    int n;
+    cin >> n;
+    vector<vector<int>> matrix(n, vector<int>(n));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            cin >> matrix[i][j];
+        }
+    }
+
+    int row_count = 0;
+    int prime_count = 0;
+    transform_matrix(matrix, n, row_count, prime_count);
+
+    cout << row_count << " " << prime_count << endl;
+    for (const auto& row : matrix) {
+        for (int val : row) {
+            cout << val << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
