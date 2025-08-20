@@ -1,0 +1,63 @@
+//CPP 
+#include <iostream>
+#include <vector>
+#include <unordered_set>
+using namespace std;
+
+const int MOD = 1e9 + 7;
+
+// Precompute Tribonacci numbers up to maxVal
+unordered_set<int> precomputeTribonacci(int maxVal) {
+    unordered_set<int> tribSet;
+    tribSet.insert(0);
+    tribSet.insert(1);
+    tribSet.insert(1);
+    
+    int t0 = 0, t1 = 1, t2 = 1;
+    while (true) {
+        int t3 = t0 + t1 + t2;
+        if (t3 > maxVal) break;
+        tribSet.insert(t3);
+        t0 = t1;
+        t1 = t2;
+        t2 = t3;
+    }
+    return tribSet;
+}
+
+// Count subarrays consisting only of Tribonacci numbers
+int count_tribonacci_subarrays(int n, const vector<int>& arr) {
+    int maxVal = 0;
+    for (int x : arr) {
+        if (x > maxVal) maxVal = x;
+    }
+    
+    unordered_set<int> tribSet = precomputeTribonacci(maxVal);
+    
+    int count = 0;
+    int length = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (tribSet.find(arr[i]) != tribSet.end()) {
+            length++;
+        } else {
+            count = (count + (long long)length * (length + 1) / 2) % MOD;
+            length = 0;
+        }
+    }
+    count = (count + (long long)length * (length + 1) / 2) % MOD;
+    
+    return count;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> arr(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> arr[i];
+    }
+    
+    cout << count_tribonacci_subarrays(n, arr) << "\n";
+    return 0;
+}
