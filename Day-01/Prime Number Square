@@ -1,0 +1,39 @@
+```cpp
+// CPP code
+#include <cmath>
+#include <cstdio>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
+
+bool isPrime(int number) {
+    if (number <= 1) return false;
+    for (int i = 2; i * i <= number; i++) {
+        if (number % i == 0) return false;
+    }
+    return true;
+}
+
+int main() {
+    int N;
+    cin >> N;
+
+    int count = 0;
+    long long ans = 0;
+
+    for (int i = 2; i < INT_MAX; i++) {
+        if (isPrime(i)) {
+            count++;
+        }
+            if (count == N) {
+                ans += 1LL * i * i;
+                break;
+            }
+    }
+
+    cout << ans;
+    return 0;
+}
