@@ -1,0 +1,35 @@
+//CPP
+#include <iostream>
+#include <string>
+
+int user_logic(const std::string& s) {
+    std::string lower = s;  // Make a modifiable copy
+    int n = lower.length();
+    int firstChar = lower[0];
+
+    // Convert to lowercase manually
+    for (int i = 0; i < n; i++) {
+        if (lower[i] >= 'A' && lower[i] <= 'Z') {
+            lower[i] = lower[i] + ('a' - 'A');  // ASCII conversion
+        }
+    }
+
+    // Reverse manually
+    std::string temp = "";
+    for (int i = n - 1; i >= 0; i--) {
+        temp += lower[i];
+    }
+
+    // Compare and return result
+    return (temp == lower) ? n : firstChar;
+}
+
+int main() {
+    std::string s;
+    std::getline(std::cin, s);
+
+    int result = user_logic(s);
+    std::cout << result << std::endl;
+
+    return 0;
+}
