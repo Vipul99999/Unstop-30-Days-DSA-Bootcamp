@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+vector<int> get_subarray_beauty(const vector<int>& nums, int k, int x) {
+    vector<int> result;
+    vector<int> freq(101, 0);  // Range: -50 to 50 => index 0 to 100
+
+    int n = nums.size();
+
+    // Fill initial window
+    for (int i = 0; i < k; ++i) {
+        freq[nums[i] + 50]++;
+    }
+
+    auto getXthNegative = [&](const vector<int>& freq) -> int {
+        int count = 0;
+        for (int i = 0; i < 50; ++i) {  // -50 to -1
+            count += freq[i];
+            if (count >= x) return i - 50;
+        }
+        return 0;
+    };
+
+    result.push_back(getXthNegative(freq));
+
+    for (int i = k; i < n; ++i) {
+        // Remove the element going out
+        freq[nums[i - k] + 50]--;
+        // Add the new element
+        freq[nums[i] + 50]++;
+        // Append the x-th smallest negative
+        result.push_back(getXthNegative(freq));
+    }
+
+    return result;
+}
+
+int main() {
+    int k, x, n;
+    cin >> k >> x >> n;
+
+    vector<int> nums(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> nums[i];
+    }
+
+    vector<int> result = get_subarray_beauty(nums, k, x);
+    for (const auto& val : result) {
+        cout << val << " ";
+    }
+    cout << endl;
+    return 0;
+}
