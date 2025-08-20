@@ -1,0 +1,53 @@
+#include <iostream>
+#include <vector>
+#include <map>
+#include <algorithm>
+#include <functional>
+using namespace std;
+
+void diagonal_sort(std::vector<std::vector<int>>& mat) {
+    // Write your logic here to sort the matrix diagonally.
+    int m = mat.size();
+    int n = mat[0].size();
+    map<int, vector<int>> diag_map;
+
+    // Step 1: Collect elements by diagonal (i - j)
+    for (int i = 0; i < m; ++i)
+        for (int j = 0; j < n; ++j)
+            diag_map[i - j].push_back(mat[i][j]);
+
+    // Step 2: Sort each diagonal
+    for (auto& [key, vec] : diag_map)
+        sort(vec.begin(), vec.end(), greater<int>()); // reverse sort for pop_back
+
+    // Step 3: Write back sorted values
+    for (int i = 0; i < m; ++i)
+        for (int j = 0; j < n; ++j) {
+            mat[i][j] = diag_map[i - j].back();
+            diag_map[i - j].pop_back();
+        }
+}
+
+int main() {
+    int m, n;
+    std::cin >> m >> n;
+    std::vector<std::vector<int>> mat(m, std::vector<int>(n));
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            std::cin >> mat[i][j];
+        }
+    }
+
+    // Call user logic function
+    diagonal_sort(mat);
+
+    // Print the sorted matrix
+    for (const auto& row : mat) {
+        for (const auto& element : row) {
+            std::cout << element << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    return 0;
+}
