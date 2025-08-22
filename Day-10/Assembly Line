@@ -1,0 +1,45 @@
+===========================
+	CPP CODE 
+===========================
+#include <iostream>
+#include <vector>
+
+void find_student_positions(int n, std::vector<int>& heights, int k, std::vector<int>& queries, std::vector<int>& results) {
+    results.resize(k);  // Ensure results has space for k queries
+
+    for (int i = 0; i < k; ++i) {
+        int target = queries[i];
+        int low = 0, high = n;
+
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            if (heights[mid] < target) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+
+        results[i] = low;
+    }
+    }
+
+int main() {
+    int n, k;
+    std::cin >> n;
+    std::vector<int> heights(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> heights[i];
+    }
+    std::cin >> k;
+    std::vector<int> queries(k);
+    for (int i = 0; i < k; ++i) {
+        std::cin >> queries[i];
+    }
+    std::vector<int> results(k);
+    find_student_positions(n, heights, k, queries, results);
+    for (int i = 0; i < k; ++i) {
+        std::cout << results[i] << std::endl;
+    }
+    return 0;
+}
