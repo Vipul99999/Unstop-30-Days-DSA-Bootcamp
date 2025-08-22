@@ -1,0 +1,51 @@
+===========================
+	CPP CODE 
+===========================
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <algorithm>
+
+int user_logic(std::string s) {
+    int maxLen = 0;
+    std::string sentence;
+    
+    for (char &c : s) {
+        if (c == '.' || c == ',') {
+            if (!sentence.empty()) {
+                std::stringstream ss(sentence);
+                std::string word;
+                int count = 0;
+                while (ss >> word) {
+                    count++;
+                }
+                maxLen = std::max(maxLen, count);
+                sentence.clear();
+            }
+        } else {
+            sentence += c;
+        }
+    }
+    
+    // Handle last sentence if no punctuation at end
+    if (!sentence.empty()) {
+        std::stringstream ss(sentence);
+        std::string word;
+        int count = 0;
+        while (ss >> word) {
+            count++;
+        }
+        maxLen = std::max(maxLen, count);
+    }
+    
+    return maxLen;
+}
+
+int main() {
+    std::string s;
+    std::getline(std::cin, s);
+    
+    int result = user_logic(s);
+    std::cout << result << std::endl;
+    return 0;
+}
