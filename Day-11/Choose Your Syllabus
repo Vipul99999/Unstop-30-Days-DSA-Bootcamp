@@ -1,0 +1,50 @@
+===========================
+	CPP CODE 
+===========================
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Count of elements <= target
+int countLessThanOrEqual(const vector<int>& arr, int target) {
+    auto it = upper_bound(arr.begin(), arr.end(), target);
+    return it - arr.begin();
+}
+
+int user_logic(int n, vector<int>& arr, vector<int>& b) {
+    // Sort both syllabuses for binary search
+    vector<int> syll1 = arr;
+    vector<int> syll2 = b;
+    sort(syll1.begin(), syll1.end());
+    sort(syll2.begin(), syll2.end());
+
+    long long interest1 = 0, interest2 = 0;
+
+    // Interest value of Syllabus 1 (compare with syllabus 2)
+    for (int i = 0; i < n; i++) {
+        interest1 += countLessThanOrEqual(syll2, arr[i]);
+    }
+
+    // Interest value of Syllabus 2 (compare with syllabus 1)
+    for (int i = 0; i < n; i++) {
+        interest2 += countLessThanOrEqual(syll1, b[i]);
+    }
+
+    return max(interest1, interest2);
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> arr(n), b(n);
+    for (int i = 0; i < n; i++) {
+        cin >> arr[i];
+    }
+    for (int i = 0; i < n; i++) {
+        cin >> b[i];
+    }
+    int result = user_logic(n, arr, b);
+    cout << result << endl;
+    return 0;
+}
