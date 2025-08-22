@@ -1,0 +1,65 @@
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+void user_logic(const string& s) {
+    vector<int> freq(26, 0);
+
+    // Count frequencies
+    for (char ch : s) {
+        freq[ch - 'a']++;
+    }
+
+    // Collect odd frequencies
+    vector<pair<int, int>> odd_freq; // {frequency, index}
+    for (int i = 0; i < 26; i++) {
+        if (freq[i] % 2 == 1) {
+            odd_freq.push_back({freq[i], i});
+        }
+    }
+
+    if (odd_freq.empty()) {
+        cout << -1;
+        return;
+    }
+
+    // Sort: primary by descending frequency, secondary by ascending letter
+    sort(odd_freq.begin(), odd_freq.end(), [](auto &a, auto &b) {
+        if (a.first == b.first) return a.second < b.second; // alphabetical order
+        return a.first > b.first;
+    });
+
+    int size = odd_freq.size();
+
+    if (size < 3) {
+        // Find lexicographically smallest odd-frequency character
+        pair<int,int> smallest = odd_freq[0];
+        for (auto &p : odd_freq) {
+            if (p.first < smallest.first || 
+               (p.first == smallest.first && p.second < smallest.second)) {
+                smallest = p;
+            }
+        }
+        cout << char(smallest.second + 'a') << " " << smallest.first;
+        return;
+    }
+
+    // Otherwise print top 3 and their product
+    long long mul = 1;
+    for (int i = 0; i < 3; i++) {
+        cout << char(odd_freq[i].second + 'a') << " " << odd_freq[i].first << "\n";
+        mul *= odd_freq[i].first;
+    }
+    cout << mul;
+}
+
+int main() {
+    string s;
+    getline(cin, s);
+    user_logic(s);
+    return 0;
+}
