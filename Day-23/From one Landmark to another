@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#define MOD 1000000007
+
+int count_paths(int n, int m, std::vector<std::pair<int, int>>& roads) {
+    std::vector<std::vector<int>> adj(n + 1);
+    std::vector<int> indeg(n + 1, 0);
+
+    // Build adjacency list and indegree
+    for (auto &edge : roads) {
+        adj[edge.first].push_back(edge.second);
+        indeg[edge.second]++;
+    }
+
+    // Topological order using Kahn's Algorithm (BFS)
+    std::queue<int> q;
+    for (int i = 1; i <= n; i++) {
+        if (indeg[i] == 0) q.push(i);
+    }
+
+    std::vector<int> topo;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        topo.push_back(u);
+        for (int v : adj[u]) {
+            indeg[v]--;
+            if (indeg[v] == 0) q.push(v);
+        }
+    }
+
+    // DP array
+    std::vector<long long> dp(n + 1, 0);
+    dp[1] = 1; // One way to start at node 1
+
+    for (int u : topo) {
+        for (int v : adj[u]) {
+            dp[v] = (dp[v] + dp[u]) % MOD;
+        }
+    }
+
+    return dp[n] % MOD;
+}
+
+int main() {
+    int n, m;
+    std::cin >> n >> m;
+    std::vector<std::pair<int, int>> roads(m);
+    for (int i = 0; i < m; i++) {
+        std::cin >> roads[i].first >> roads[i].second;
+    }
+    int result = count_paths(n, m, roads);
+    std::cout << result << std::endl;
+    return 0;
+}
