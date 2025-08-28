@@ -1,0 +1,29 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+void sort_by_difficulty(string &s) {
+    auto cmp = [](char a, char b) {
+        int diffA = (a - 'a' + 1) % 5;
+        int diffB = (b - 'a' + 1) % 5;
+
+        if (diffA != diffB)
+            return diffA < diffB; // smaller difficulty first (0 < 1 < 2 ...)
+        
+        // Tie-breaker: character earlier in alphabet has MORE difficulty, so comes later
+        return a > b; 
+    };
+    sort(s.begin(), s.end(), cmp);
+}
+
+int main() {
+    int N;
+    string Str;
+    cin >> N >> Str;
+    
+    sort_by_difficulty(Str);
+    
+    cout << Str << endl;
+    return 0;
+}
