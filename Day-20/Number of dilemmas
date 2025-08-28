@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+bool isSafe(const std::vector<int>& board, int row, int col) {
+    for (int i = 0; i < row; ++i) {
+        int placedCol = board[i];
+        if (placedCol == col || std::abs(placedCol - col) == std::abs(i - row)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void solveNQueens(int n, int row, std::vector<int>& board, int& count) {
+    if (row == n) {
+        count++;
+        return;
+    }
+    for (int col = 0; col < n; ++col) {
+        if (isSafe(board, row, col)) {
+            board[row] = col;
+            solveNQueens(n, row + 1, board, count);
+            board[row] = -1;
+        }
+    }
+}
+
+int totalNQueens(int n) {
+    if (n == 0) return 1; // empty board: one valid (empty) arrangement
+    std::vector<int> board(n, -1);
+    int count = 0;
+    solveNQueens(n, 0, board, count);
+    return count;
+}
+
+int main() {
+    int n;
+    std::cin >> n;
+    std::cout << totalNQueens(n) << std::endl;
+    return 0;
+}
