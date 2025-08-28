@@ -1,0 +1,75 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int data = 0, Node* next = nullptr) : data(data), next(next) {}
+};
+
+Node* user_logic(int k, int n, const vector<int>& seeds) {
+    Node* head = nullptr;
+    Node* tail = nullptr;
+
+    for (int i = 0; i < n; i += k) {
+        int groupSize = min(k, n - i);  // Handle last group
+        long long sum = 0;
+        for (int j = 0; j < groupSize; ++j) {
+            sum += seeds[i + j];
+        }
+
+        if (groupSize < k) {
+            // Last group with less than k apples: add all seeds individually
+            for (int j = 0; j < groupSize; ++j) {
+                Node* newNode = new Node(seeds[i + j]);
+                if (!head) {
+                    head = tail = newNode;
+                } else {
+                    tail->next = newNode;
+                    tail = newNode;
+                }
+            }
+        } else {
+            // Take floor of average
+            int avg = sum / groupSize;
+            if (avg % 2 == 0) { // Only even averages are added
+                Node* newNode = new Node(avg);
+                if (!head) {
+                    head = tail = newNode;
+                } else {
+                    tail->next = newNode;
+                    tail = newNode;
+                }
+            }
+        }
+    }
+
+    return head;
+}
+
+void print_linked_list(Node* head) {
+    Node* temp = head;
+    while (temp != nullptr) {
+        cout << temp->data;
+        if (temp->next != nullptr) {
+            cout << " ";
+        }
+        temp = temp->next;
+    }
+    cout << " null" << endl;
+}
+
+int main() {
+    int k, n;
+    cin >> k >> n;
+    vector<int> seeds(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> seeds[i];
+    }
+    
+    Node* head = user_logic(k, n, seeds);
+    print_linked_list(head);
+    
+    return 0;
+}
