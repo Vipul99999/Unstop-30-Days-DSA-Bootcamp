@@ -1,0 +1,18 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int main() {
+    int N;
+    cin >> N;
+
+    vector<long long> dp(N + 1, 0); // dp[i] = max enhancement for i
+
+    for (int i = 1; i <= N; i++) {
+        long long split = dp[i / 2] + dp[i / 3] + dp[i / 4];
+        dp[i] = max((long long)i, split);
+    }
+
+    cout << dp[N] << "\n";
+    return 0;
+}
