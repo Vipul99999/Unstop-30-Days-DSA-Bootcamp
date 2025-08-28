@@ -1,0 +1,91 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <tuple>
+using namespace std;
+
+struct Pos {
+    int i, j, swords;
+};
+
+int di[8] = {-1,-1,-1,0,0,1,1,1};
+int dj[8] = {-1,0,1,-1,1,-1,0,1};
+
+void user_logic(int k, int n, int m, const vector<vector<int>>& matrix) {
+    // Find king position
+    int si=-1, sj=-1;
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<m; j++) {
+            if (matrix[i][j] == -1) {
+                si=i; sj=j;
+            }
+        }
+    }
+
+    // Track visited soldiers
+    vector<vector<bool>> visited(n, vector<bool>(m, false));
+
+    // Queue for BFS
+    queue<tuple<int,int,int>> q; // i,j,current swords
+    q.push({si, sj, k});
+
+    vector<pair<int,int>> path;
+    int currentSwords = k;
+
+    bool progress = true;
+    while (progress) {
+        progress = false;
+        // Try to find any soldier we can kill
+        for (int i=0; i<n; i++) {
+            for (int j=0; j<m; j++) {
+                int val = matrix[i][j];
+                if (val > 0 && !visited[i][j]) {
+                    if (val < currentSwords) {
+                        // We can kill this soldier
+                        visited[i][j] = true;
+                        currentSwords += val;
+                        path.push_back({i,j});
+                        progress = true;
+                    }
+                }
+            }
+        }
+    }
+
+    // Check if all soldiers are killed
+    bool allKilled = true;
+    for (int i=0; i<n; i++) {
+        for (int j=0; j<m; j++) {
+            if (matrix[i][j] > 0 && !visited[i][j]) {
+                allKilled = false;
+            }
+        }
+    }
+
+    if (!allKilled) {
+        cout << "Lose" << endl;
+    } else {
+        cout << "Save and path as i and j format" << endl;
+        for (auto &p : path) {
+            cout << p.first << " " << p.second << endl;
+        }
+    }
+}
+
+
+int main() {
+    int k, n, m;
+    std::cin >> k >> n >> m;
+    
+    std::vector<std::vector<int>> matrix(n, std::vector<int>(m));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            std::cin >> matrix[i][j];
+        }
+    }
+    
+    // Call user logic function
+    user_logic(k, n, m, matrix);
+    
+    return 0;
+}
