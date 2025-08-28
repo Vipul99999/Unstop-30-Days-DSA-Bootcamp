@@ -1,0 +1,44 @@
+#include <iostream>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+set<long long> uniqueNumbers; // store unique numbers
+
+void generateNumbers(vector<int>& arr, vector<bool>& used, long long current) {
+    if (current != 0) {
+        uniqueNumbers.insert(current);
+    }
+    
+    for (int i = 0; i < arr.size(); i++) {
+        if (!used[i]) {
+            used[i] = true;
+            generateNumbers(arr, used, current * 10 + arr[i]);
+            used[i] = false;
+        }
+    }
+}
+
+int count_divisible_combinations(int K, int N, vector<int>& arr) {
+    uniqueNumbers.clear();
+    vector<bool> used(N, false);
+    generateNumbers(arr, used, 0);
+
+    int count = 0;
+    for (auto num : uniqueNumbers) {
+        if (num % K == 0) count++;
+    }
+    return count;
+}
+
+int main() {
+    int K, N;
+    cin >> K >> N;
+
+    vector<int> arr(N);
+    for (int i = 0; i < N; i++) cin >> arr[i];
+
+    cout << count_divisible_combinations(K, N, arr) << endl;
+    return 0;
+}
