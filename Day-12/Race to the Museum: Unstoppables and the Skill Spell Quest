@@ -1,0 +1,59 @@
+===========================
+	CPP CODE 
+===========================
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+
+bool canAssign(int T, int n, int m, int p, vector<int>& A, vector<int>& B) {
+    int i = 0, j = 0;
+    while (i < n && j < m) {
+        // Can Unstoppable i use spell j within time T?
+        if (abs(A[i] - B[j]) + abs(B[j] - p) <= T) {
+            i++; // assign spell j to Unstoppable i
+        }
+        j++; // move to next spell
+    }
+    return i == n; // all assigned?
+}
+
+int min_delivery_time(int n, int m, int p, vector<int>& unstoppables, vector<int>& spells) {
+    sort(unstoppables.begin(), unstoppables.end());
+    sort(spells.begin(), spells.end());
+
+    int lo = 0, hi = 2e9, ans = hi;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (canAssign(mid, n, m, p, unstoppables, spells)) {
+            ans = mid;
+            hi = mid - 1;
+        } else {
+            lo = mid + 1;
+        }
+    }
+    return ans;
+}
+
+int main() {
+    int n, m, p;
+    cin >> n >> m >> p;
+    
+    vector<int> unstoppables(n);
+    for(int i = 0; i < n; ++i) {
+        cin >> unstoppables[i];
+    }
+
+    vector<int> spells(m);
+    for(int i = 0; i < m; ++i) {
+        cin >> spells[i];
+    }
+    
+    int result = min_delivery_time(n, m, p, unstoppables, spells);
+    cout << result << endl;
+
+    return 0;
+}
