@@ -1,0 +1,63 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Node {
+    int val;
+    Node* next;
+    Node(int x) : val(x), next(nullptr) {}
+};
+
+int minChanges(Node* head, int n) {
+    vector<int> arr;
+    Node* temp = head;
+
+    // Step 1: Copy linked list into array
+    while (temp) {
+        arr.push_back(temp->val);
+        temp = temp->next;
+    }
+
+    // Step 2: Sort a copy of array
+    vector<int> sortedArr = arr;
+    sort(sortedArr.begin(), sortedArr.end());
+
+    // Step 3: Compare original with sorted
+    int changes = 0;
+    for (int i = 0; i < n; i++) {
+        if (arr[i] != sortedArr[i]) {
+            changes++;
+        }
+    }
+
+    return changes;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> values(n);
+    for (int i = 0; i < n; ++i) {
+        cin >> values[i];
+    }
+
+    Node* head = new Node(values[0]);
+    Node* temp = head;
+    for (int i = 1; i < n; ++i) {
+        temp->next = new Node(values[i]);
+        temp = temp->next;
+    }
+
+    int result = minChanges(head, n);
+    cout << result << endl;
+
+    // Cleanup
+    while (head != nullptr) {
+        Node* next = head->next;
+        delete head;
+        head = next;
+    }
+
+    return 0;
+}
