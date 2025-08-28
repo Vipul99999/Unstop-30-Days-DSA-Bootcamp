@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct ListNode {
+    int val;
+    struct ListNode* next;
+};
+
+typedef struct ListNode ListNode;
+char* user_logic(ListNode* head) {
+    // 1) Build the number numerically from the list (drops leading zeros)
+    unsigned long long num = 0;
+    for (ListNode* p = head; p != NULL; p = p->next) {
+        // each node has a single digit 0..9
+        num = num * 10 + (unsigned long long)(p->val);
+    }
+
+    // 2) Reverse the number and 3) sum digits (both done together)
+    unsigned long long rev = 0, sum = 0;
+    unsigned long long t = num;
+    if (t == 0) {
+        rev = 0;
+        sum = 0;
+    } else {
+        while (t > 0) {
+            int d = (int)(t % 10);
+            rev = rev * 10 + (unsigned long long)d;
+            sum += (unsigned long long)d;
+            t /= 10;
+        }
+    }
+
+    // 4) Check parity of (rev - sum)
+    unsigned long long result = rev - sum; // non-negative for any valid input
+    return (result % 2ULL == 0ULL) ? "even" : "odd";
+}
+
+
+int main() {
+    int N;
+    scanf("%d", &N);
+    ListNode* head = NULL;
+    ListNode* tail = NULL;
+    for (int i = 0; i < N; i++) {
+        int value;
+        scanf("%d", &value);
+        ListNode* newNode = (ListNode*)malloc(sizeof(ListNode));
+        newNode->val = value;
+        newNode->next = NULL;
+        if (!head) {
+            head = newNode;
+        } else {
+            tail->next = newNode;
+        }
+        tail = newNode;
+    }
+    char* result = user_logic(head);
+    printf("%s\n", result);
+    return 0;
+}
+                       
