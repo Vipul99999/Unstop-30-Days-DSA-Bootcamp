@@ -1,0 +1,44 @@
+===========================
+	CPP CODE 
+===========================
+#include <iostream>
+#include <vector>
+using namespace std;
+void user_logic(int n, const std::vector<int>& seat_preferences, std::vector<int>& final_seating);
+int location_of_seating(vector<int>& arr,const vector<int>& seat_preferences, int i, int n );
+
+
+int main() {
+    int n;
+    std::cin >> n;
+    std::vector<int> seat_preferences(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> seat_preferences[i];
+    }
+    std::vector<int> final_seating(n);
+    user_logic(n, seat_preferences, final_seating);
+    for (int i = 0; i < n; ++i) {
+        std::cout << final_seating[i] << " ";
+    }
+    std::cout << std::endl;
+    return 0;
+}
+
+int location_of_seating(vector<int>& arr,const vector<int>& seat_preferences, int i, int n ){
+   int x = seat_preferences[i]-1;
+
+   while(arr[x] != -1){
+     x = (x+1) % n;
+   }
+   arr[x] = 1;
+   return  x+1;
+}
+
+void user_logic(int n, const std::vector<int>& seat_preferences, std::vector<int>& final_seating) {
+    // Write your logic here.
+    vector<int>arr(n, -1);
+    for(int i = 0; i < n; i++){
+        int fill = location_of_seating(arr, seat_preferences, i, n);
+        final_seating[i] = fill;
+    }
+}
