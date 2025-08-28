@@ -1,0 +1,97 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+int N, M;
+vector<vector<string>> matrix;
+vector<vector<bool>> visited;
+
+vector<string> best_path;
+int max_fruits = 0;
+
+// Check if a cell is valid
+bool isValid(int x, int y) {
+    return (x >= 0 && x < N && y >= 0 && y < M && matrix[x][y] != "wall" && !visited[x][y]);
+}
+
+// DFS to explore paths
+void dfs(int x, int y, vector<string>& current_path) {
+    // If this cell is a fruit, add to path
+    if (matrix[x][y] != "path") {
+        current_path.push_back(matrix[x][y]);
+    }
+
+    // Update best path if needed
+    if ((int)current_path.size() > max_fruits) {
+        max_fruits = current_path.size();
+        best_path = current_path;
+    }
+
+    // Movement directions: right, left, down, up
+    int dx[] = {0, 0, 1, -1};
+    int dy[] = {1, -1, 0, 0};
+
+    visited[x][y] = true;
+
+    for (int k = 0; k < 4; k++) {
+        int nx = x + dx[k], ny = y + dy[k];
+        if (isValid(nx, ny)) {
+            dfs(nx, ny, current_path);
+        }
+    }
+
+    visited[x][y] = false;
+
+    // Backtrack (remove fruit if it was added)
+    if (matrix[x][y] != "path") {
+        current_path.pop_back();
+    }
+}
+
+vector<string> fruit_paths(vector<vector<string>>& mat) {
+    matrix = mat;
+    visited.assign(N, vector<bool>(M, false));
+    best_path.clear();
+    max_fruits = 0;
+
+    bool hasFruit = false;
+
+    // Start DFS from every fruit cell
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < M; j++) {
+            if (matrix[i][j] != "wall" && matrix[i][j] != "path") {
+                hasFruit = true;
+                vector<string> current_path;
+                dfs(i, j, current_path);
+            }
+        }
+    }
+
+    if (!hasFruit) return {};
+    return best_path;
+}
+
+int main() {
+    cin >> N >> M;
+    vector<vector<string>> mat(N, vector<string>(M));
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < M; ++j) {
+            cin >> mat[i][j];
+        }
+    }
+
+    vector<string> result = fruit_paths(mat);
+
+    if (result.empty()) {
+        cout << "null" << endl;
+    } else {
+        for (size_t i = 0; i < result.size(); ++i) {
+            if (i > 0) cout << " --> ";
+            cout << result[i];
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
