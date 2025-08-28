@@ -1,0 +1,111 @@
+#include <iostream>
+#include <vector>
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int data) : data(data), next(nullptr) {}
+};
+
+class LinkedList {
+public:
+    Node* head;
+    Node* tail;
+
+    LinkedList() : head(nullptr), tail(nullptr) {}
+
+    void push(int data) {
+        Node* newNode = new Node(data);
+        if (head == nullptr) {
+            head = newNode;
+            tail = newNode;
+        } else {
+            tail->next = newNode;
+            tail = newNode;
+        }
+    }
+
+    void printList() {
+        Node* temp = head;
+        while (temp != nullptr) {
+            std::cout << temp->data << " ";
+            temp = temp->next;
+        }
+        std::cout << std::endl;
+    }
+};
+
+void user_logic(LinkedList& linkedList) {
+    if (!linkedList.head || !linkedList.head->next || !linkedList.head->next->next)
+        return; // no rearrangement needed
+
+    Node* firstHead = nullptr;
+    Node* firstTail = nullptr;
+    Node* secondHead = nullptr;
+    Node* secondTail = nullptr;
+    Node* thirdHead = nullptr;
+    Node* thirdTail = nullptr;
+
+    Node* curr = linkedList.head;
+    int idx = 0;
+    
+    while (curr) {
+        Node* nextNode = curr->next;
+        curr->next = nullptr;
+
+        if (idx % 3 == 0) {
+            if (!firstHead) firstHead = firstTail = curr;
+            else { firstTail->next = curr; firstTail = curr; }
+        } else if (idx % 3 == 1) {
+            if (!secondHead) secondHead = secondTail = curr;
+            else { secondTail->next = curr; secondTail = curr; }
+        } else {
+            if (!thirdHead) thirdHead = thirdTail = curr;
+            else { thirdTail->next = curr; thirdTail = curr; }
+        }
+        curr = nextNode;
+        idx++;
+    }
+
+    // Merge the three lists in the order first, second, third
+    Node* mergedHead = nullptr;
+    Node* mergedTail = nullptr;
+    Node* pointers[3] = { firstHead, secondHead, thirdHead };
+
+    bool done = false;
+    while (!done) {
+        done = true;
+        for (int i = 0; i < 3; i++) {
+            if (pointers[i]) {
+                if (!mergedHead) {
+                    mergedHead = mergedTail = pointers[i];
+                } else {
+                    mergedTail->next = pointers[i];
+                }
+                // Move tail to the end of current sublist
+                while (mergedTail->next) mergedTail = mergedTail->next;
+                pointers[i] = nullptr; // done with this sublist
+                done = false;
+            }
+        }
+    }
+
+    linkedList.head = mergedHead;
+}
+
+int main() {
+    int n;
+    std::cin >> n;
+
+    LinkedList list;
+    for (int i = 0; i < n; ++i) {
+        int element;
+        std::cin >> element;
+        list.push(element);
+    }
+
+    user_logic(list);
+    list.printList();
+
+    return 0;
+}
