@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+void printReverse(int arr[], int index, int n) {
+    if (index == n) return; // base case
+    printReverse(arr, index + 1, n); // recursive call to next element
+    printf("%d", arr[index]);
+    if (index > 0) printf(" "); // avoid trailing space
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+    
+    int arr[N];
+    for (int i = 0; i < N; i++) {
+        scanf("%d", &arr[i]);
+    }
+    
+    printReverse(arr, 0, N);
+    return 0;
+}
+                  
