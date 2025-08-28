@@ -1,0 +1,26 @@
+#include <iostream>
+#include <vector>
+
+std::vector<std::pair<int, int>> x_power_y_pairs(int n) {
+    // Write your logic here.
+    // Return a vector of pairs [X, Y] where X^Y equals n
+    return {};
+}
+
+int main() {
+    int n;
+    std::cin >> n;
+    
+    // Call the user logic function
+    std::vector<std::pair<int, int>> pairs = x_power_y_pairs(n);
+    
+    // Output the count of valid pairs
+    std::cout << pairs.size() << std::endl;
+    
+    // Output each pair
+    for (const auto& pair : pairs) {
+        std::cout << pair.first << " " << pair.second << std::endl;
+    }
+    
+    return 0;
+}
