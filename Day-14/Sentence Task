@@ -1,0 +1,36 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
+using namespace std;
+
+void sort_sentence(const string& s) {
+    stringstream ss(s);
+    string word;
+    vector<string> result(10); // max 9 words (1-indexed)
+
+    while (ss >> word) {
+        // last character is the index
+        int pos = word.back() - '0';
+        word.pop_back(); // remove digit from word
+        result[pos] = word;
+    }
+
+    // print the sentence in correct order
+    bool first = true;
+    for (int i = 1; i <= 9; i++) {
+        if (!result[i].empty()) {
+            if (!first) cout << " ";
+            cout << result[i];
+            first = false;
+        }
+    }
+    cout << endl;
+}
+
+int main() {
+    string s;
+    getline(cin, s);
+    sort_sentence(s);
+    return 0;
+}
