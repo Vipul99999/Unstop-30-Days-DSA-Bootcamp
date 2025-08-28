@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+struct Node {
+    int data;
+    Node *left, *right;
+    Node(int value) : data(value), left(NULL), right(NULL) {}
+};
+
+// Build tree from array using complete binary tree indexing
+Node* insert_nodes(vector<string>& arr, int i) {
+    if (i >= arr.size() || arr[i] == "null") {
+        return NULL;
+    }
+    
+    int data = stoi(arr[i]);
+    Node *root = new Node(data);
+    root->left = insert_nodes(arr, 2 * i + 1);
+    root->right = insert_nodes(arr, 2 * i + 2);
+    return root;
+}
+
+// Check if two trees are identical
+bool areIdentical(Node* A, Node* B) {
+    if (!A && !B) return true;
+    if (!A || !B) return false;
+    if (A->data != B->data) return false;
+    return areIdentical(A->left, B->left) && areIdentical(A->right, B->right);
+}
+
+// Check if B is subtree of A
+bool is_parallel(Node* A, Node* B) {
+    if (!B) return true;   // Empty tree is always subtree
+    if (!A) return false;
+    if (areIdentical(A, B)) return true;
+    return is_parallel(A->left, B) || is_parallel(A->right, B);
+}
+
+int main() {
+    int N, M;
+    cin >> N;
+    vector<string> WorldA(N);
+    for (int i = 0; i < N; i++) {
+        cin >> WorldA[i];
+    }
+    
+    cin >> M;
+    vector<string> WorldB(M);
+    for (int i = 0; i < M; i++) {
+        cin >> WorldB[i];
+    }
+    
+    Node *root_A = insert_nodes(WorldA, 0);
+    Node *root_B = insert_nodes(WorldB, 0);
+    
+    if (is_parallel(root_A, root_B)) {
+        cout << "YES" << endl;
+    } else {
+        cout << "NO" << endl;
+    }
+    
+    return 0;
+}
