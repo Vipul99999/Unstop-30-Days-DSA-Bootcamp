@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const int MOD = 1e9 + 7;
+
+// Fast modular exponentiation
+long long mod_pow(long long base, long long exp, long long mod) {
+    long long result = 1;
+    while (exp > 0) {
+        if (exp % 2 == 1) {
+            result = (result * base) % mod;
+        }
+        base = (base * base) % mod;
+        exp /= 2;
+    }
+    return result;
+}
+
+// Function to count primes up to N using sieve
+int count_primes(int N) {
+    if (N < 2) return 0;
+    vector<bool> isPrime(N + 1, true);
+    isPrime[0] = isPrime[1] = false;
+    for (int i = 2; i * i <= N; i++) {
+        if (isPrime[i]) {
+            for (int j = i * i; j <= N; j += i) {
+                isPrime[j] = false;
+            }
+        }
+    }
+    int cnt = 0;
+    for (int i = 2; i <= N; i++) {
+        if (isPrime[i]) cnt++;
+    }
+    return cnt;
+}
+
+int count_valid_pins(int N) {
+    int prime_count = count_primes(N);
+    int non_prime_count = N - prime_count;
+    long long ways_prime = mod_pow(4, prime_count, MOD);
+    long long ways_non_prime = mod_pow(5, non_prime_count, MOD);
+    return (ways_prime * ways_non_prime) % MOD;
+}
+
+int main() {
+    int N;
+    cin >> N;
+    cout << count_valid_pins(N) << endl;
+    return 0;
+}
