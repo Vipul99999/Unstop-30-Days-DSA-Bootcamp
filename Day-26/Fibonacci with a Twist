@@ -1,0 +1,29 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int calculateX(int N) {
+    if (N == 0) return 5;
+    if (N == 1) return 3;
+
+    vector<int> F(N + 1);
+    F[0] = 5;
+    F[1] = 3;
+
+    for (int i = 2; i <= N; ++i) {
+        if (i % 2 == 1) {
+            F[i] = (F[i - 1] + F[i - 2]) % 998; // odd case
+        } else {
+            F[i] = (int)(((long long)F[i - 1] * F[i - 2]) % 999); // even case
+        }
+    }
+    return F[N];
+}
+
+int main() {
+    int N;
+    std::cin >> N;  // Read the single integer input
+    int result = calculateX(N);
+    std::cout << result << std::endl;  // Print the result
+    return 0;
+}
