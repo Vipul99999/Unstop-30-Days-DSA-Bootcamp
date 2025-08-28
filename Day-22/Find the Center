@@ -1,0 +1,57 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    long long first;
+    if (!(cin >> first)) return 0;
+
+    // read all remaining integers (edge endpoints)
+    vector<int> vals;
+    int x;
+    while (cin >> x) vals.push_back(x);
+
+    // number of pairs available
+    size_t pairsAvailable = vals.size() / 2;
+
+    // determine number of edges:
+    // If pairsAvailable == first, then first likely was edge count.
+    // If pairsAvailable == first - 1, then first likely was node count (edges = nodes-1).
+    long long edgesCount;
+    if ((long long)pairsAvailable == first) edgesCount = first;
+    else if ((long long)pairsAvailable == first - 1) edgesCount = first - 1;
+    else edgesCount = pairsAvailable; // fallback: trust available pairs
+
+    if (edgesCount == 0) {
+        // no edges read: nothing we can do reliably
+        return 0;
+    }
+
+    // compute max label to size degree array
+    int maxLabel = 0;
+    for (long long i = 0; i < edgesCount; ++i) {
+        int u = vals[2*i], v = vals[2*i + 1];
+        maxLabel = max(maxLabel, max(u, v));
+    }
+
+    vector<int> deg(maxLabel + 1, 0);
+    for (long long i = 0; i < edgesCount; ++i) {
+        int u = vals[2*i], v = vals[2*i + 1];
+        if (u >= 0 && u <= maxLabel) deg[u]++;
+        if (v >= 0 && v <= maxLabel) deg[v]++;
+    }
+
+    int center = 1;
+    int bestDeg = deg.size() > 1 ? deg[1] : 0;
+    for (int i = 1; i <= maxLabel; ++i) {
+        if (deg[i] > bestDeg) {
+            bestDeg = deg[i];
+            center = i;
+        }
+    }
+
+    cout << center << '\n';
+    return 0;
+}
