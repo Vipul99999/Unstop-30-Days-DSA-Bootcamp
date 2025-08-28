@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+const int MOD = 1e9 + 7;
+
+int numPlusMinusSequence(const string& S) {
+    int n = S.size();
+    vector<int> dp(n + 1, 1);  // Base: 1 way for permutation of length 1
+
+    for (int i = 0; i < n; i++) {
+        vector<int> prefix(i + 2, 0);
+        for (int j = 0; j <= i; j++) {
+            prefix[j + 1] = (prefix[j] + dp[j]) % MOD;
+        }
+
+        vector<int> newdp(i + 2, 0);
+        for (int j = 0; j <= i + 1; j++) {
+            if (S[i] == '+') {
+                // Must increase: choose from all smaller
+                newdp[j] = prefix[j];
+            } else {
+                // Must decrease: choose from all greater
+                newdp[j] = (prefix[i + 1] - prefix[j] + MOD) % MOD;
+            }
+        }
+        dp = move(newdp);
+    }
+
+    int ans = 0;
+    for (int x : dp) ans = (ans + x) % MOD;
+    return ans;
+}
+
+int main() {
+    string S;
+    cin >> S;
+    cout << numPlusMinusSequence(S) << endl;
+    return 0;
+}
