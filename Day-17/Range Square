@@ -1,0 +1,55 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(nullptr) {}
+};
+
+int main() {
+    int N1, N2;
+    cin >> N1 >> N2;
+    int N;
+    cin >> N;
+
+    vector<int> values(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> values[i];
+    }
+
+    // Build the linked list
+    ListNode* head = new ListNode(values[0]);
+    ListNode* current = head;
+    for (int i = 1; i < N; ++i) {
+        current->next = new ListNode(values[i]);
+        current = current->next;
+    }
+
+    // Check for perfect square in the range
+    bool found = false;
+    current = head;
+    while (current) {
+        for (int i = N1; i <= N2; ++i) {
+            if (i * i == current->val) {
+                found = true;
+                break;
+            }
+        }
+        if (found) break;
+        current = current->next;
+    }
+
+    cout << (found ? 1 : 0) << endl;
+
+    // Free memory
+    current = head;
+    while (current) {
+        ListNode* next = current->next;
+        delete current;
+        current = next;
+    }
+
+    return 0;
+}
