@@ -1,0 +1,82 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <cmath>
+using namespace std;
+
+class TreeNode {
+public:
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+// Function to build tree from level order array
+TreeNode* buildTree(const vector<int>& nodes) {
+    if (nodes.empty() || nodes[0] == -1) return nullptr;
+
+    TreeNode* root = new TreeNode(nodes[0]);
+    queue<TreeNode*> q;
+    q.push(root);
+
+    int i = 1;
+    while (!q.empty() && i < nodes.size()) {
+        TreeNode* curr = q.front();
+        q.pop();
+
+        // Left child
+        if (i < nodes.size() && nodes[i] != -1) {
+            curr->left = new TreeNode(nodes[i]);
+            q.push(curr->left);
+        }
+        i++;
+
+        // Right child
+        if (i < nodes.size() && nodes[i] != -1) {
+            curr->right = new TreeNode(nodes[i]);
+            q.push(curr->right);
+        }
+        i++;
+    }
+    return root;
+}
+
+string user_logic(int M, vector<int>& nodes) {
+    // Step 1: Build the tree
+    TreeNode* root = buildTree(nodes);
+    if (!root) return "NO";
+
+    // Step 2: Traverse right path
+    int sum = 0;
+    TreeNode* curr = root;
+    while (curr) {
+        sum += curr->val;
+        if (curr->right) {
+            curr = curr->right;
+        } else break; // reached leaf
+    }
+
+    // Step 3: Check perfect square
+    int sq = sqrt(sum);
+    if (sq * sq == sum) return "YES";
+    return "NO";
+}
+
+int main() {
+    int M;
+    cin >> M;
+    vector<int> nodes(M);
+    for (int i = 0; i < M; ++i) {
+        string val;
+        cin >> val;
+        if (val == "N") {
+            nodes[i] = -1; // N represents NULL
+        } else {
+            nodes[i] = stoi(val);
+        }
+    }
+    string result = user_logic(M, nodes);
+    cout << result << endl;
+    return 0;
+}
