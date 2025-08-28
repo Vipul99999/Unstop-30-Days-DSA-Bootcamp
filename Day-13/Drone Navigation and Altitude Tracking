@@ -1,0 +1,34 @@
+===========================
+	CPP CODE 
+===========================
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+long long maximum_altitude(const std::vector<int>& change) {
+    long long current = 0;       // current altitude
+    long long maxAltitude = 0;   // maximum altitude reached
+
+    for (int delta : change) {
+        current += delta;               // apply change
+        if (current < 0) current = 0;   // emergency hover reset
+        if (current > maxAltitude) maxAltitude = current;
+    }
+    return maxAltitude;  
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    cin >> n;
+    vector<int> change(n);
+    for (int i = 0; i < n; ++i) cin >> change[i];
+
+    long long result = maximum_altitude(change);
+    cout << result << '\n';
+    return 0;
+}
