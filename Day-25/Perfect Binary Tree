@@ -1,0 +1,42 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+long long ans = 0;
+vector<int> W;
+
+long long dfs(int node, int n) {
+    if (node >= (1 << n)) return 0; // leaf
+    
+    long long left = dfs(2 * node, n) + W[2 * node];
+    long long right = dfs(2 * node + 1, n) + W[2 * node + 1];
+    
+    ans += abs(left - right); // we need to increase smaller one
+    
+    return max(left, right);
+}
+
+int user_logic(int n, const vector<int>& weights) {
+    int total_nodes = (1 << (n + 1));
+    W.assign(total_nodes, 0);
+
+    // Fill weights
+    for (int i = 2; i < total_nodes; i++) {
+        W[i] = weights[i - 2]; // because weights start from node 2
+    }
+    
+    ans = 0;
+    dfs(1, n);
+    return ans;
+}
+
+int main() {
+    int n;
+    cin >> n;
+    vector<int> weights((1 << (n + 1)) - 2);
+    for (int i = 0; i < weights.size(); i++) {
+        cin >> weights[i];
+    }
+    cout << user_logic(n, weights) << endl;
+    return 0;
+}
