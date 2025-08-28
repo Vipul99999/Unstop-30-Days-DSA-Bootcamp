@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include <climits>
+using namespace std;
+
+int find_minority_element_index(int N, vector<int>& nums) {
+    unordered_map<int,int> freq;
+    for (int x : nums) freq[x]++;
+
+    // Collect frequencies
+    vector<int> freqList;
+    for (auto& p : freq) freqList.push_back(p.second);
+    sort(freqList.begin(), freqList.end());
+
+    // Find median frequency
+    double median;
+    int M = freqList.size();
+    if (M % 2 == 1) {
+        median = freqList[M / 2];
+    } else {
+        median = (freqList[M/2 - 1] + freqList[M/2]) / 2.0;
+    }
+
+    // Find the candidate element
+    int chosenVal = INT_MAX;
+    int bestDiff = INT_MAX;
+    int chosenIndex = -1;
+
+    for (int i = 0; i < N; i++) {
+        int val = nums[i];
+        int f = freq[val];
+        int diff = abs(f - median);
+
+        // Check rules
+        if (diff < bestDiff ||
+            (diff == bestDiff && val < chosenVal) ||
+            (diff == bestDiff && val == chosenVal && chosenIndex == -1)) 
+        {
+            bestDiff = diff;
+            chosenVal = val;
+            chosenIndex = i; // first occurrence automatically ensured
+        }
+    }
+
+    return chosenIndex + 1; // 1-based
+}
+
+int main() {
+    int N;
+    cin >> N;
+    vector<int> nums(N);
+    for (int i = 0; i < N; ++i) {
+        cin >> nums[i];
+    }
+
+    int result = find_minority_element_index(N, nums);
+    cout << result << endl;
+
+    return 0;
+}
