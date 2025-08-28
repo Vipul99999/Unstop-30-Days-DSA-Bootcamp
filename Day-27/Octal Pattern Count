@@ -1,0 +1,43 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+const long long MOD = 1000000007;
+
+string toOctal(long long num) {
+    if (num == 0) return "0";
+    string oct = "";
+    while (num > 0) {
+        oct = char('0' + (num % 8)) + oct;
+        num /= 8;
+    }
+    return oct;
+}
+
+string user_logic(int N) {
+    if (N == 0) return "1"; // special case
+    
+    // dp for vowels: 0-a, 1-e, 2-i, 3-o, 4-u
+    vector<long long> prev(5, 1), curr(5, 0);
+    
+    for (int len = 2; len <= N; len++) {
+        curr[0] = (prev[1] + prev[4]) % MOD; // a <- e, u
+        curr[1] = (prev[0] + prev[2]) % MOD; // e <- a, i
+        curr[2] = (prev[1] + prev[3]) % MOD; // i <- e, o
+        curr[3] = (prev[2] + prev[4]) % MOD; // o <- i, u
+        curr[4] = (prev[0] + prev[3]) % MOD; // u <- a, o
+        prev = curr;
+    }
+    
+    long long total = 0;
+    for (int i = 0; i < 5; i++) total = (total + prev[i]) % MOD;
+    
+    return toOctal(total);
+}
+
+int main() {
+    int N;
+    cin >> N;
+    cout << user_logic(N) << endl;
+    return 0;
+}
