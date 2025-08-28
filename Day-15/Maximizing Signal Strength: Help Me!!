@@ -1,0 +1,37 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iomanip>
+
+float calculate_highest_average_efficiency(int N, std::vector<int>& efficiencies) {
+    // If components are less than 5, return 0
+    if (N < 5) return 0.00000;
+
+    // Sort efficiencies in ascending order
+    std::sort(efficiencies.begin(), efficiencies.end());
+
+    // Remove the smallest N/5 components
+    int toRemove = N / 5;
+    long long totalSum = 0;
+
+    for (int i = toRemove; i < N; ++i) {
+        totalSum += efficiencies[i];
+    }
+
+    // Calculate average
+    float average = (float)totalSum / (N - toRemove);
+    return average;
+}
+
+int main() {
+    int N;
+    std::cin >> N;
+    std::vector<int> efficiencies(N);
+    for (int i = 0; i < N; ++i) {
+        std::cin >> efficiencies[i];
+    }
+
+    float result = calculate_highest_average_efficiency(N, efficiencies);
+    std::cout << std::fixed << std::setprecision(5) << result << std::endl;
+    return 0;
+}
