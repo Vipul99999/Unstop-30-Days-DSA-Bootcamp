@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+long long operations = 0;
+long long prev_val = 0;
+
+// In-order traversal on array-based binary tree
+void inorder(int index, const vector<long long> &Arr, int N) {
+    if (index >= N) return;
+    
+    // Left child
+    inorder(2 * index + 1, Arr, N);
+    
+    // Current node
+    long long val = Arr[index];
+    if (val <= prev_val) {
+        operations += (prev_val + 1 - val);
+        prev_val = prev_val + 1;
+    } else {
+        prev_val = val;
+    }
+    
+    // Right child
+    inorder(2 * index + 2, Arr, N);
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int N;
+    cin >> N;
+    vector<long long> Arr(N);
+    for (int i = 0; i < N; i++) cin >> Arr[i];
+
+    operations = 0;
+    prev_val = 0;
+
+    inorder(0, Arr, N);
+
+    cout << operations << "\n";
+    return 0;
+}
