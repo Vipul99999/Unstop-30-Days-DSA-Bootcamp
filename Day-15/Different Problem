@@ -1,0 +1,43 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+int calculate_difference(int num) {
+    bool isNegative = num < 0;
+    std::string s = std::to_string(std::abs(num));
+
+    // Sort digits to form max and min numbers
+    std::string maxNum = s;
+    std::string minNum = s;
+
+    std::sort(maxNum.begin(), maxNum.end(), std::greater<char>()); // descending for max
+    std::sort(minNum.begin(), minNum.end());                       // ascending for min
+
+    int maxVal = std::stoi(maxNum);
+    int minVal = std::stoi(minNum);
+
+    if (isNegative) {
+        // For negative numbers, maximum is the least negative, minimum is the most negative
+        std::swap(maxVal, minVal);
+        maxVal = -maxVal;
+        minVal = -minVal;
+    }
+
+    return std::abs(maxVal - minVal);
+}
+
+int main() {
+    int T;
+    std::cin >> T;
+    std::vector<int> results(T);
+    for (int i = 0; i < T; ++i) {
+        int num;
+        std::cin >> num;
+        results[i] = calculate_difference(num);
+    }
+    for (const int result : results) {
+        std::cout << result << std::endl;
+    }
+    return 0;
+}
