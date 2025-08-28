@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+
+struct ListNode {
+    int val;
+    ListNode* next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+int longest_arithmetic_progression(ListNode* head) {
+    if (!head) return 0;
+    if (!head->next) return 1; // Only one element
+    
+    int maxLen = 1;
+    int currLen = 1;
+    int diff = head->next->val - head->val;
+    currLen = 2; // First two nodes
+    
+    ListNode* prev = head->next;
+    ListNode* curr = prev->next;
+    
+    while (curr) {
+        int currDiff = curr->val - prev->val;
+        if (currDiff == diff) {
+            currLen++;
+        } else {
+            diff = currDiff;
+            currLen = 2; // restart AP with prev and curr
+        }
+        if (currLen > maxLen) maxLen = currLen;
+        prev = curr;
+        curr = curr->next;
+    }
+    
+    return maxLen;
+}
+
+int main() {
+    int n;
+    std::cin >> n;
+    if (n == 0) {
+        std::cout << 0 << std::endl;
+        return 0;
+    }
+    
+    std::vector<int> values(n);
+    for (int i = 0; i < n; ++i) {
+        std::cin >> values[i];
+    }
+    
+    ListNode* head = new ListNode(values[0]);
+    ListNode* current = head;
+    for (int i = 1; i < n; ++i) {
+        current->next = new ListNode(values[i]);
+        current = current->next;
+    }
+    
+    int result = longest_arithmetic_progression(head);
+    std::cout << result << std::endl;
+    
+    // Free memory
+    current = head;
+    while (current != NULL) {
+        ListNode* next = current->next;
+        delete current;
+        current = next;
+    }
+    return 0;
+}
