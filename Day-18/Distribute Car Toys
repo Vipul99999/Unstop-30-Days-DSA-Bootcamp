@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+// function to compute nCk
+long long nCr(long long n, long long r) {
+    if (n < r || r < 0) return 0;
+    if (r > n - r) r = n - r;
+    long long res = 1;
+    for (long long i = 0; i < r; i++) {
+        res = res * (n - i) / (i + 1);
+    }
+    return res;
+}
+
+int main() {
+    int K, S;
+    scanf("%d", &K);
+    scanf("%d", &S);
+
+    long long ways = 0;
+
+    for (int j = 0; j <= 3; j++) {
+        long long val = S - j * (K + 1);
+        if (val < 0) continue;
+        long long term = nCr(3, j) * nCr(val + 2, 2);
+        if (j % 2 == 1) ways -= term;
+        else ways += term;
+    }
+
+    printf("%lld\n", ways);
+    return 0;
+}
+             
