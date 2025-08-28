@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int even_divisors(int n) {
+    int count = 0;
+    for (int i = 2; i <= n; i += 2)
+        if (n % i == 0) count++;
+    return count;
+}
+
+int odd_divisors(int n) {
+    int count = 0;
+    for (int i = 1; i <= n; i += 2)
+        if (n % i == 0) count++;
+    return count;
+}
+
+string can_reach_cookies(int N, int K) {
+    int X = even_divisors(N);
+    int Y = odd_divisors(N);
+
+    // Try each number of moves from 1 to K
+    for (int m = 1; m <= K; m++) {
+        int h = (m + 1) / 2; // Harry moves
+        int s = m / 2;       // Shambh moves
+        if (h * X + s * Y == N)
+            return "YES " + to_string(m);
+    }
+
+    return "NO";
+}
+
+int main() {
+    int n, k;
+    cin >> n >> k;
+
+    string result = can_reach_cookies(n, k);
+    cout << result << endl;
+
+    return 0;
+}
