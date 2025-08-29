@@ -2,43 +2,26 @@
 	CPP CODE 
 ===========================
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <numeric>
 using namespace std;
 
 int main() {
-    int s1, s2, s3;
-    cin >> s1 >> s2 >> s3;
-    vector<int> v = {s1, s2, s3};
-    sort(v.begin(), v.end());
-    s1 = v[0]; s2 = v[1]; s3 = v[2];
-
-    int total = s1 + s2 + s3;
-    if (total % 2 != 0) {
-        cout << -1;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
+    vector<int> s(3);
+    for (int i = 0; i < 3; i++) {
+        cin >> s[i];
+    }
+    
+    int total_sum = accumulate(s.begin(), s.end(), 0);
+    
+    if (total_sum % 2 == 1) {
+        cout << -1 << endl;
         return 0;
     }
-
-    int ans = -1;
-
-    // Try all possible counts of both-solved rounds
-    for (int x12 = 0; x12 <= min(s1, s2); x12++) {
-        for (int x13 = 0; x13 <= min(s1, s3); x13++) {
-            for (int x23 = 0; x23 <= min(s2, s3); x23++) {
-                int r1 = s1 - (x12 + x13);
-                int r2 = s2 - (x12 + x23);
-                int r3 = s3 - (x13 + x23);
-
-                // Remaining must be non-negative and divisible by 2
-                if (r1 >= 0 && r2 >= 0 && r3 >= 0 &&
-                    r1 % 2 == 0 && r2 % 2 == 0 && r3 % 2 == 0) {
-                    ans = max(ans, x12 + x13 + x23);
-                }
-            }
-        }
-    }
-
-    cout << ans;
-    return 0;
-}
-
-}
+    
+   
