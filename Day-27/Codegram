@@ -1,27 +1,29 @@
 #include <iostream>
-#include <cmath>
-using namespace std;
+#include <vector>
+#include <algorithm>
 
-void user_logic(int N, int &min_people, int &max_one_way_pairs) {
-    if (N == 0) {
-        min_people = 0;
-        max_one_way_pairs = 0;
-        return;
+const int INF = 1e9;
+
+void solve() {
+    int n;
+    std::cin >> n;
+
+    std::vector<int> dp(n + 1, INF);
+    dp[0] = 0;
+
+    for (int i = 1; i <= n; ++i) {
+        for (int s = 1; (s * (s - 1)) / 2 <= i; ++s) {
+            int p = (s * (s - 1)) / 2;
+            if (i - p >= 0) {
+                dp[i] = std::min(dp[i], dp[i - p] + s);
+            }
+        }
     }
 
-    // Solve k*(k-1)/2 >= N for minimum k
-    // Quadratic: k^2 - k - 2*N >= 0
-    int k = (int)ceil((1 + sqrt(1 + 8.0*N)) / 2.0);
-
-    min_people = k;
-    max_one_way_pairs = 0; // as per problem examples
+    std::cout << dp[n] << ' ' << ((long long) dp[n] * (dp[n] - 1)) / 2 - n << '\n';
 }
 
 int main() {
-    int N;
-    cin >> N;
-    int min_people, max_one_way_pairs;
-    user_logic(N, min_people, max_one_way_pairs);
-    cout << min_people << " " << max_one_way_pairs << endl;
+    solve();
     return 0;
 }
