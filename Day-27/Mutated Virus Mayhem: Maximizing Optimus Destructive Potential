@@ -1,40 +1,54 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
 using namespace std;
 
 int maxMutatedViruses(int N, vector<int>& contamination_levels) {
-    vector<int> freq(101, 0);
-    for (int level : contamination_levels) freq[level]++;
+    unordered_map<int, int> freq;
+    
+    for (int level : contamination_levels) {
+        freq[level]++;
+    }
 
-    int count = 0;
+    int mutatedVirusCount = 0;
 
-    // Process consecutive triples optimally
-    for (int i = 1; i <= 98; i++) {
-        int take = min({freq[i], freq[i+1], freq[i+2]});
-        if (take > 0) {
-            freq[i] -= take;
-            freq[i+1] -= take;
-            freq[i+2] -= take;
-            count += take;
+    vector<int> levels;
+    for (const auto& entry : freq) {
+        levels.push_back(entry.first);
+    }
+    sort(levels.begin(), levels.end());
+
+    for (size_t i = 0; i < levels.size(); ++i) {
+        int level = levels[i];
+        while (freq[level] >= 3) {
+            mutatedVirusCount++;
+            freq[level] -= 3;
+        }
+        if (i + 2 < levels.size() && levels[i + 1] == level + 1 && levels[i + 2] == level + 2) {
+            while (freq[level] > 0 && freq[level + 1] > 0 && freq[level + 2] > 0) {
+                mutatedVirusCount++;
+                freq[level]--;
+                freq[level + 1]--;
+                freq[level + 2]--;
+            }
         }
     }
 
-    // Remaining identical triples
-    for (int i = 1; i <= 100; i++) {
-        count += freq[i] / 3;
-    }
-
-    return count;
+    return mutatedVirusCount;
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+    int N;
+    cin >> N;
+    vector<int> contamination_levels(N);
+    for (int i = 0; i < N; i++) {
+        cin >> contamination_levels[i];
+    }
+    
+    int result = maxMutatedViruses(N, contamination_levels);
+    cout << result << endl;
 
-    int V;
-    cin >> V;
-    vector<int> contamination_levels(V);
-    for (int i = 0; i < V; i++) cin >> contamination_levels[i];
-
-    cout << maxMutatedViruses(V, contamination_levels) << "\n";
     return 0;
 }
