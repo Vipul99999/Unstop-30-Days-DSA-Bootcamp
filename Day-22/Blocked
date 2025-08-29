@@ -1,84 +1,50 @@
-#include <iostream>
-#include <vector>
-#include <queue>
+#include <bits/stdc++.h>
 using namespace std;
 
-int bfs(int start, int n, vector<vector<int>>& adj, int skip_u = -1, int skip_v = -1) {
-    vector<int> dist(n + 1, -1);
-    queue<int> q;
-    dist[start] = 0;
-    q.push(start);
-
-    while(!q.empty()) {
-        int u = q.front(); q.pop();
-        for(int v : adj[u]) {
-            // Skip the edge if specified
-            if ((u == skip_u && v == skip_v) || (u == skip_v && v == skip_u)) continue;
-            if(dist[v] == -1) {
-                dist[v] = dist[u] + 1;
-                q.push(v);
+int main(){
+    int n, m; cin >> n >> m;
+    vector<vector<int>> G(n, vector<int>(n, -1));
+    vector<pair<int,int>> edge(m);
+    for(int i = 0; i < m; i++){
+        int a, b; cin >> a >> b; a--; b--;
+        G[a][b] = i;
+        edge[i] = make_pair(a,b);
+    }
+    vector<int> dis(n,-1); dis[0] = 0;
+    vector<pair<int,int>> memo(n);
+    queue<int> que; que.push(0);
+    while(!que.empty()){
+        int i = que.front(); que.pop();
+        for(int j = 0; j < n; j++) if(dis[j] == -1 && G[i][j] != -1){
+            dis[j] = dis[i] + 1;
+            memo[j] = make_pair(i,G[i][j]);
+            que.push(j);
+        }
+    }
+    if(dis[n-1] == -1){
+        for(int i = 0; i < m; i++) cout << -1 << endl;
+        return 0;
+    }
+    vector<int> shortest_path;
+    int cur = n-1;
+    while(cur != 0){
+        shortest_path.push_back(memo[cur].second);
+        cur = memo[cur].first;
+    }
+    vector<int> ans(m, dis[n-1]);
+    for(int e : shortest_path){
+        G[edge[e].first][edge[e].second] = -1;
+        queue<int> que; que.push(0);
+        vector<int> dis(n, -1); dis[0] = 0;
+        while(!que.empty()){
+            int i = que.front(); que.pop();
+            for(int j = 0; j < n; j++) if(dis[j] == -1 && G[i][j] != -1){
+                dis[j] = dis[i] + 1;
+                que.push(j);
             }
         }
+        ans[e] = dis[n-1];
+        G[edge[e].first][edge[e].second] = e;
     }
-    return dist[n]; // distance to vertex N, -1 if unreachable
-}
-
-vector<int> bfs_all(int start, int n, vector<vector<int>>& adj) {
-    vector<int> dist(n + 1, -1);
-    queue<int> q;
-    dist[start] = 0;
-    q.push(start);
-
-    while(!q.empty()) {
-        int u = q.front(); q.pop();
-        for(int v : adj[u]) {
-            if(dist[v] == -1) {
-                dist[v] = dist[u] + 1;
-                q.push(v);
-            }
-        }
-    }
-    return dist;
-}
-
-void user_logic(int n, int m, vector<pair<int, int>> &edges) {
-    vector<vector<int>> adj(n + 1);
-    for(auto &e : edges) {
-        adj[e.first].push_back(e.second);
-        adj[e.second].push_back(e.first);
-    }
-
-    // BFS from 1 and N
-    vector<int> dist_from_start = bfs_all(1, n, adj);
-    vector<int> dist_from_end = bfs_all(n, n, adj);
-    int L = dist_from_start[n];
-
-    for(auto &e : edges) {
-        int u = e.first, v = e.second;
-        // Check if edge is on any shortest path
-        bool on_path = false;
-        if (dist_from_start[u] != -1 && dist_from_end[v] != -1 && dist_from_start[u] + 1 + dist_from_end[v] == L)
-            on_path = true;
-        if (dist_from_start[v] != -1 && dist_from_end[u] != -1 && dist_from_start[v] + 1 + dist_from_end[u] == L)
-            on_path = true;
-
-        if(!on_path) {
-            cout << L << endl; // edge not critical
-        } else {
-            int new_dist = bfs(1, n, adj, u, v);
-            cout << new_dist << endl;
-        }
-    }
-}
-
-int main() {
-    int n, m;
-    cin >> n >> m;
-    vector<pair<int, int>> edges(m);
-    for (int i = 0; i < m; i++) {
-        cin >> edges[i].first >> edges[i].second;
-    }
-
-    user_logic(n, m, edges);
-    return 0;
+    for(int x:ans)cout << x << endl;
 }
